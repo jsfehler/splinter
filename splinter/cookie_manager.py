@@ -18,23 +18,27 @@ class CookieManagerAPI(InheritedDocs("_CookieManagerAPI", (object,), {})):
     A CookieManager acts like a ``dict``, so you can access the value of a
     cookie through the [] operator, passing the cookie identifier:
 
-        >>> cookie_manager.add({'name': 'Tony'})
+        >>> cookie_manager.add('name', 'Tony')
         >>> assert cookie_manager['name'] == 'Tony'
     """
 
     def __init__(self, driver):
         self.driver = driver
 
-    def add(self, cookies):
-        """
-        Adds a cookie.
+    def add(self, key, value='', **kwargs):
+        """Add a cookie.
 
-        The ``cookie`` parameter is a ``dict`` where each key is an identifier
-        for the cookie value (like any ``dict``).
+        Arguments:
+            key: Cookie name
+            value: Cookie value
+            kwargs: Parameters to set in the cookie. Valid parameters depend
+                on the Driver.
 
-        Example of use:
+        Examples:
 
-            >>> cookie_manager.add({'name': 'Tony'})
+            >>> cookie_manager.add('name', 'Tony')
+
+            >>> cookie_manager.add('name', 'Tony', secure=True)
         """
         raise NotImplementedError
 
@@ -71,7 +75,7 @@ class CookieManagerAPI(InheritedDocs("_CookieManagerAPI", (object,), {})):
 
         Examples:
 
-            >>> cookie_manager.add({'name': 'Tony'})
+            >>> cookie_manager.add('name', 'Tony')
             >>> cookie_manager.all()
             [{'name': 'Tony'}]
         """

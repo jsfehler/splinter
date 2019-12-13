@@ -14,14 +14,10 @@ from .lxmldriver import LxmlDriver
 
 
 class CookieManager(CookieManagerAPI):
-    def add(self, cookies):
-        if isinstance(cookies, list):
-            for cookie in cookies:
-                for key, value in cookie.items():
-                    self.driver.cookies[key] = value
-            return
-        for key, value in cookies.items():
-            self.driver.cookies[key] = value
+    def add(self, key, value='', **kwargs):
+        self.driver.cookies[key] = value
+        for k, v in kwargs.items():
+            self.driver.cookies[key][k] = v
 
     def delete(self, *cookies):
         if cookies:
@@ -43,7 +39,7 @@ class CookieManager(CookieManagerAPI):
         return cookies
 
     def __getitem__(self, item):
-        return self.driver.cookies[item].value
+        return self.driver.cookies[item]
 
     def __contains__(self, key):
         return key in self.driver.cookies

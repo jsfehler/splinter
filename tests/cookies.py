@@ -3,6 +3,7 @@
 # Copyright 2012 splinter authors. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
+import time
 
 
 class CookiesTest(object):
@@ -11,35 +12,9 @@ class CookiesTest(object):
         browser = self.get_new_browser()
         browser.visit(self.EXAMPLE_APP)
 
-        browser.cookies.add({"sha": "zam"})
+        browser.cookies.add("sha", "zam")
 
-        assert "zam" == browser.cookies["sha"]
-
-        browser.quit()
-
-    def test_create_many_cookies_at_once_as_dict(self):
-        """Should be able to create many cookies at once as dict"""
-        browser = self.get_new_browser()
-        browser.visit(self.EXAMPLE_APP)
-
-        cookies = {"sha": "zam", "foo": "bar"}
-        browser.cookies.add(cookies)
-
-        assert "zam" == browser.cookies["sha"]
-        assert "bar" == browser.cookies["foo"]
-
-        browser.quit()
-
-    def test_create_many_cookies_at_once_as_list(self):
-        """Should be able to create many cookies at once as list"""
-        browser = self.get_new_browser()
-        browser.visit(self.EXAMPLE_APP)
-
-        cookies = [{"sha": "zam"}, {"foo": "bar"}]
-        browser.cookies.add(cookies)
-
-        assert "zam" == browser.cookies["sha"]
-        assert "bar" == browser.cookies["foo"]
+        assert "zam" == browser.cookies["sha"]["value"]
 
         browser.quit()
 
@@ -48,8 +23,8 @@ class CookiesTest(object):
         browser = self.get_new_browser()
         browser.visit(self.EXAMPLE_APP)
 
-        browser.cookies.add({"whatever": "and ever"})
-        browser.cookies.add({"anothercookie": "im bored"})
+        browser.cookies.add("whatever", "and ever")
+        browser.cookies.add("anothercookie", "im bored")
         browser.cookies.delete()
 
         assert {} == browser.cookies
@@ -62,7 +37,7 @@ class CookiesTest(object):
         browser.visit(self.EXAMPLE_APP)
 
         browser.cookies.delete()
-        browser.cookies.add({"cookie": "with milk"})
+        browser.cookies.add("cookie", "with milk")
         browser.cookies.delete("cookie")
 
         assert {} == browser.cookies
@@ -75,12 +50,12 @@ class CookiesTest(object):
         browser.visit(self.EXAMPLE_APP)
 
         browser.cookies.delete()
-        browser.cookies.add({"acookie": "cooked"})
-        browser.cookies.add({"anothercookie": "uncooked"})
-        browser.cookies.add({"notacookie": "halfcooked"})
+        browser.cookies.add("acookie", "cooked")
+        browser.cookies.add("anothercookie", "uncooked")
+        browser.cookies.add("notacookie", "halfcooked")
         browser.cookies.delete("acookie", "notacookie")
 
-        assert "uncooked" == browser.cookies["anothercookie"]
+        assert "uncooked" == browser.cookies["anothercookie"]["value"]
 
         browser.quit()
 
@@ -89,7 +64,7 @@ class CookiesTest(object):
         browser.visit(self.EXAMPLE_APP)
 
         browser.cookies.delete()
-        browser.cookies.add({"foo": "bar"})
+        browser.cookies.add("foo", "bar")
         browser.cookies.delete("mwahahahaha")
 
         {"foo": "bar"} == browser.cookies
@@ -102,8 +77,8 @@ class CookiesTest(object):
         browser.visit(self.EXAMPLE_APP)
 
         browser.cookies.delete()
-        browser.cookies.add({"taco": "shrimp"})
-        browser.cookies.add({"lavar": "burton"})
+        browser.cookies.add("taco", "shrimp")
+        browser.cookies.add("lavar", "burton")
 
         assert 2 == len(browser.cookies.all())
 
@@ -118,10 +93,16 @@ class CookiesTest(object):
         browser = self.get_new_browser()
         browser.visit(self.EXAMPLE_APP)
 
-        cookies = {"sha": "zam"}
-        browser.cookies.add(cookies)
+        browser.cookies.add('sha', 'zam')
 
         assert "sha" in browser.cookies
         assert "foo" not in browser.cookies
 
         browser.quit()
+
+    def test_cookies_extra_parameters(self):
+        """Cookie can be created with extra parameters."""
+        timestamp = int(time.time() + 120)
+        self.browser.cookies.add('sha', 'zam', expiry=timestamp)
+        cookie = self.browser.cookies["sha"]
+        assert timestamp == cookie["expiry"]

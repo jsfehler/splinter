@@ -17,22 +17,17 @@ from .lxmldriver import LxmlDriver
 
 
 class CookieManager(CookieManagerAPI):
-    def add(self, cookies):
-        if isinstance(cookies, list):
-            for cookie in cookies:
-                for key, value in cookie.items():
-                    self.driver.set_cookie("localhost", key, value)
-            return
-        for key, value in cookies.items():
-            self.driver.set_cookie("localhost", key, value)
+    def add(self, key, value='', **kwargs):
+        kwargs['server_name'] = 'localhost'
+        kwargs['key'] = key
+        kwargs['value'] = value
+
+        self.driver.set_cookie(**kwargs)
 
     def delete(self, *cookies):
         if cookies:
             for cookie in cookies:
-                try:
-                    self.driver.delete_cookie("localhost", cookie)
-                except KeyError:
-                    pass
+                self.driver.delete_cookie('localhost', cookie)
         else:
             self.delete_all()
 
@@ -42,12 +37,12 @@ class CookieManager(CookieManagerAPI):
     def all(self, verbose=False):
         cookies = {}
         for cookie in self.driver.cookie_jar:
-            cookies[cookie.name] = cookie.value
+            cookies[cookie.name] = cookie
         return cookies
 
     def __getitem__(self, item):
         cookies = dict([(c.name, c) for c in self.driver.cookie_jar])
-        return cookies[item].value
+        return cookies[item]
 
     def __contains__(self, key):
         for cookie in self.driver.cookie_jar:
