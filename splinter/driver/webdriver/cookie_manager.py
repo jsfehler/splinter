@@ -14,13 +14,8 @@ else:
 
 
 class CookieManager(CookieManagerAPI):
-    def add(self, cookies):
-        if isinstance(cookies, list):
-            for cookie in cookies:
-                for key, value in cookie.items():
-                    self.driver.add_cookie({"name": key, "value": value})
-            return
-        for key, value in cookies.items():
+    def add(self, cookie):
+        for key, value in cookie.items():
             self.driver.add_cookie({"name": key, "value": value})
 
     def delete(self, *cookies):
