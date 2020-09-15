@@ -47,12 +47,7 @@ def _recurse(text, split_on, wrapper, replacer, inner=False):
             inner=True,
         )
 
-        if sub_block:
-            final_value += sub_block
-
-        else:
-            final_value += wrapper.format(item)
-
+        final_value += sub_block if sub_block else wrapper.format(item)
         # Don't cap the last item in the block.
         if index != len(split_text) - 1:
             final_value += replacer

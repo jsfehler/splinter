@@ -31,10 +31,10 @@ class SlowlyTypeTest(object):
 
     def test_slowly_typing(self):
         "should be able to slowly type some text in a field"
+        num_max = 6
         for name in ["type-input", "type-textarea"]:
             self.browser.visit(EXAMPLE_APP + "type")
             num = 0
-            num_max = 6
             for key in self.browser.type(name, "typing", slowly=True):
                 self.assertEqual(self.browser.is_text_present("#%d" % num), True)
                 num += 1
@@ -44,10 +44,10 @@ class SlowlyTypeTest(object):
             self.assertEqual(element.value, "typing")
 
     def test_slowly_typing_on_element(self):
+        num_max = 6
         for name in ["type-input", "type-textarea"]:
             self.browser.visit(EXAMPLE_APP + "type")
             num = 0
-            num_max = 6
             text_input = self.browser.find_by_name(name)
             typing = text_input.type("typing", slowly=True)
             for key in typing:

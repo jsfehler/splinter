@@ -77,10 +77,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
     def submit(self, form):
         method = form.attrib.get("method", "get").lower()
         action = form.attrib.get("action", "")
-        if action.strip() != ".":
-            url = os.path.join(self._url, action)
-        else:
-            url = self._url
+        url = os.path.join(self._url, action) if action.strip() != "." else self._url
         self._url = url
         data = self.serialize(form)
 
@@ -442,12 +439,9 @@ class LxmlControlElement(LxmlElement):
 
     def fill(self, value):
         parent_form = self._get_parent_form()
-        if sys.version_info[0] > 2:
-            parent_form.fields[self["name"]] = value
-        else:
-            if not isinstance(value, unicode):
-                value = value.decode("utf-8")
-            parent_form.fields[self["name"]] = value
+        if sys.version_info[0] <= 2 and not isinstance(value, unicode):
+            value = value.decode("utf-8")
+        parent_form.fields[self["name"]] = value
 
     def select(self, value):
         self._control.value = value

@@ -34,20 +34,20 @@ class CookieManager(CookieManagerAPI):
         self.driver.delete_all_cookies()
 
     def all(self, verbose=False):
-        if not verbose:
-            cleaned_cookies = {}
-            cookies = self.driver.get_cookies()
-            for cookie in cookies:
-                if not cookie["domain"].startswith("."):
-                    cookie_domain = cookie["domain"]
-                else:
-                    cookie_domain = cookie["domain"][1:]
+        if verbose:
+            return self.driver.get_cookies()
+        cleaned_cookies = {}
+        cookies = self.driver.get_cookies()
+        for cookie in cookies:
+            if not cookie["domain"].startswith("."):
+                cookie_domain = cookie["domain"]
+            else:
+                cookie_domain = cookie["domain"][1:]
 
-                if cookie_domain in urlparse(self.driver.current_url).netloc:
-                    cleaned_cookies[cookie["name"]] = cookie["value"]
+            if cookie_domain in urlparse(self.driver.current_url).netloc:
+                cleaned_cookies[cookie["name"]] = cookie["value"]
 
-            return cleaned_cookies
-        return self.driver.get_cookies()
+        return cleaned_cookies
 
     def __getitem__(self, item):
         return self.driver.get_cookie(item)["value"]

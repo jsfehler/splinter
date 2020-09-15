@@ -28,9 +28,7 @@ class ElementList(object):
         """
         Creates the list.
         """
-        self._container = []
-        self._container.extend(list)
-
+        self._container = list(list)
         self.driver = driver
         self.find_by = find_by
         self.query = query
@@ -85,8 +83,7 @@ class ElementList(object):
                 )
 
     def __iter__(self):
-        for item in self._container:
-            yield item
+        yield from self._container
 
     def __len__(self):
         """__len__ checks the internal container."""

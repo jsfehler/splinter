@@ -242,10 +242,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
             control = form.getControl(name=name)
 
             if control.type == "checkbox":
-                if value:
-                    control.value = control.options
-                else:
-                    control.value = []
+                control.value = control.options if value else []
             elif control.type == "radio":
                 control.value = [
                     option for option in control.options if option == value
