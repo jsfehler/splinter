@@ -34,3 +34,9 @@ def test_attach_file(request, browser_name):
 def test_should_support_with_statement(browser_name):
     with get_browser(browser_name):
         pass
+
+
+@pytest.mark.parametrize('browser_name', supported_browsers)
+def test_should_support_with_statement_fullscreen(browser_name):
+    with get_browser(browser_name, fullscreen=True):
+        pass
