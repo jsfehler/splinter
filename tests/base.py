@@ -4,6 +4,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 import time
+import os
 from six.moves.urllib import parse
 
 import pytest
@@ -36,6 +37,12 @@ def get_browser(browser_name, **kwargs):
             kwargs['fullscreen'] = True
         options = webdriver.chrome.options.Options()
         options.add_argument("--disable-dev-shm-usage")
+
+        # Github Actions Windows Chromedriver path
+        driver_path = os.getenv('CHROMEWEBDRIVER')
+        if driver_path:
+            kwargs['executable_path'] = driver_path
+
         return Browser(
             "chrome",
             headless=True,
@@ -70,6 +77,14 @@ def get_browser(browser_name, **kwargs):
 
     elif browser_name == 'zope.testbrowser':
         return Browser("zope.testbrowser", wait_time=0.1)
+
+    elif browser_name == 'edge':
+        # Github Actions Windows EdgeDriver path
+        driver_path = os.getenv('EDGEWEBDRIVER')
+        if driver_path:
+            kwargs['executable_path'] = driver_path
+
+        return Browser('edge', options=options, headless=True, **kwargs)
 
     raise ValueError('Unknown browser name')
 
