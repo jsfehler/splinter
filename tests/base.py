@@ -84,7 +84,7 @@ def get_browser(browser_name, **kwargs):
         if driver_path:
             kwargs['executable_path'] = driver_path
 
-        return Browser('edge', options=options, headless=True, **kwargs)
+        return Browser('edge', headless=True, **kwargs)
 
     raise ValueError('Unknown browser name')
 
