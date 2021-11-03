@@ -47,10 +47,7 @@ class CookieManager(CookieManagerAPI):
         self.driver.cookies.clearAll()
 
     def all(self, verbose=False):
-        cookies = {}
-        for key, value in self.driver.cookies.items():
-            cookies[key] = value
-        return cookies
+        return {key: value for key, value in self.driver.cookies.items()}
 
     def __getitem__(self, item):
         return self.driver.cookies[item]
@@ -216,9 +213,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
                 control = self._browser.getControl(name=name, index=index)
                 elements.append(control)
                 index += 1
-            except LookupError:
-                break
-            except NotImplementedError:
+            except (LookupError, NotImplementedError):
                 break
         return ElementList(
             [ZopeTestBrowserControlElement(element, self) for element in elements],
@@ -271,10 +266,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
                 control = form.getControl(name=name)
 
                 if control.type == "checkbox":
-                    if value:
-                        control.value = control.options
-                    else:
-                        control.value = []
+                    control.value = control.options if value else []
                 elif control.type == "radio":
                     control.value = [
                         option for option in control.options if option == value
