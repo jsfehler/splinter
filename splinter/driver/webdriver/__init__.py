@@ -227,8 +227,6 @@ def _find(self, finder, selector):
 
     """
     elements = None
-    elem_list = []
-
     try:
         elements = finder(selector)
         if not isinstance(elements, list):
@@ -242,10 +240,11 @@ def _find(self, finder, selector):
         # quickly
         pass
 
-    if elements:
-        elem_list = [self.element_class(element, self) for element in elements]
-
-    return elem_list
+    return (
+        [self.element_class(element, self) for element in elements]
+        if elements
+        else []
+    )
 
 
 def find_by(self, finder, selector, original_find=None, original_query=None, wait_time=None):
@@ -343,7 +342,7 @@ class BaseWebDriver(DriverAPI):
 
         while time.time() < end_time:
             element = finder(selector, wait_time=0)
-            if not element or (element and not element.visible):
+            if not element or not element.visible:
                 return True
         return False
 
@@ -423,8 +422,7 @@ class BaseWebDriver(DriverAPI):
         wait_time = wait_time or self.wait_time
 
         try:
-            alert = WebDriverWait(self.driver, wait_time).until(EC.alert_is_present())
-            return alert
+            return WebDriverWait(self.driver, wait_time).until(EC.alert_is_present())
         except TimeoutException:
             return None
 
@@ -606,10 +604,7 @@ class BaseWebDriver(DriverAPI):
 
         for name, value in field_values.items():
             try:
-                if form:
-                    elements = form.find_by_name(name)
-                else:
-                    elements = self.find_by_name(name)
+                elements = form.find_by_name(name) if form else self.find_by_name(name)
                 element = elements.first
                 if (
                     element["type"] in ["text", "password", "tel"]
@@ -1029,9 +1024,7 @@ class WebDriverElement(ElementAPI):
 
         box = x, y, x + w, y + h
         box = [int(i) for i in box]
-        target = im.crop(box)
-
-        return target
+        return im.crop(box)
 
     def __getitem__(self, attr):
         return self._element.get_attribute(attr)

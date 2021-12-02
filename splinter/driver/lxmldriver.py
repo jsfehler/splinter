@@ -48,8 +48,6 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
         self._do_method("get", url)
 
     def serialize(self, form):
-        data = {}
-
         for key in form.inputs.keys():
             input = form.inputs[key]
             if getattr(input, "type", "") == "submit":
@@ -59,14 +57,12 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
                 except ValueError:
                     pass
 
-        for k, v in form.fields.items():
-            if v is None:
-                continue
+        data = {
+            k: list(v) if isinstance(v, lxml.html.MultipleSelectOptions) else v
+            for k, v in form.fields.items()
+            if v is not None
+        }
 
-            if isinstance(v, lxml.html.MultipleSelectOptions):
-                data[k] = list(v)
-            else:
-                data[k] = v
 
         for key in form.inputs.keys():
             input = form.inputs[key]
@@ -209,10 +205,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
         html = self.htmltree
 
         xpath = '//*[@name="%s"]' % name
-        elements = []
-
-        for xpath_element in html.xpath(xpath):
-            elements.append(xpath_element)
+        elements = [xpath_element for xpath_element in html.xpath(xpath)]
 
         find_by = "name"
         query = xpath
@@ -275,23 +268,18 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
                     element = self.find_by_name(name)
                     control = element.first._control
                 control_type = control.get("type")
-                if control_type == "checkbox":
-                    if value:
-                        control.value = value  # control.options
-                    else:
-                        control.value = []
-                elif control_type == "radio":
-                    control.value = (
-                        value
-                    )  # [option for option in control.options if option == value]
-                elif control_type == "select":
-                    if isinstance(value, list):
-                        control.value = value
-                    else:
-                        control.value = [value]
+                if (
+                    control_type == "checkbox"
+                    and value
+                    or control_type != "checkbox"
+                    and control_type == "radio"
+                    or control_type not in ["checkbox", "select"]
+                ):
+                    control.value = value  # control.options
+                elif control_type == "checkbox":
+                    control.value = []
                 else:
-                    # text, textarea, password, tel
-                    control.value = value
+                    control.value = value if isinstance(value, list) else [value]
             except ElementDoesNotExist as e:
                 if not ignore_missing:
                     raise ElementDoesNotExist(e)

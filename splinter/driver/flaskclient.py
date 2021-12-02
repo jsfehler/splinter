@@ -35,20 +35,14 @@ class CookieManager(CookieManagerAPI):
         self.driver.cookie_jar.clear()
 
     def all(self, verbose=False):
-        cookies = {}
-        for cookie in self.driver.cookie_jar:
-            cookies[cookie.name] = cookie.value
-        return cookies
+        return {cookie.name: cookie.value for cookie in self.driver.cookie_jar}
 
     def __getitem__(self, item):
         cookies = {c.name: c for c in self.driver.cookie_jar}
         return cookies[item].value
 
     def __contains__(self, key):
-        for cookie in self.driver.cookie_jar:
-            if cookie.name == key:
-                return True
-        return False
+        return any(cookie.name == key for cookie in self.driver.cookie_jar)
 
     def __eq__(self, other_object):
         if isinstance(other_object, dict):
@@ -65,7 +59,7 @@ class FlaskClient(LxmlDriver):
         app.config["TESTING"] = True
         self._browser = app.test_client()
         self._cookie_manager = CookieManager(self._browser)
-        self._custom_headers = custom_headers if custom_headers else {}
+        self._custom_headers = custom_headers or {}
         super(FlaskClient, self).__init__(wait_time=wait_time)
 
     def __enter__(self):

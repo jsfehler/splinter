@@ -33,10 +33,7 @@ class CookieManager(CookieManagerAPI):
         self.driver.cookies.clear()
 
     def all(self, verbose=False):
-        cookies = {}
-        for key, value in self.driver.cookies.items():
-            cookies[key] = value
-        return cookies
+        return {key: value for key, value in self.driver.cookies.items()}
 
     def __getitem__(self, item):
         return self.driver.cookies[item].value
@@ -62,10 +59,11 @@ class DjangoClient(LxmlDriver):
 
         self._custom_headers = kwargs.pop("custom_headers", {})
 
-        client_kwargs = {}
-        for key, value in kwargs.items():
-            if key.startswith("client_"):
-                client_kwargs[key.replace("client_", "")] = value
+        client_kwargs = {
+            key.replace("client_", ""): value
+            for key, value in kwargs.items()
+            if key.startswith("client_")
+        }
 
         self._browser = Client(**client_kwargs)
         self._user_agent = user_agent
@@ -96,11 +94,11 @@ class DjangoClient(LxmlDriver):
         extra = {}
         components = parse.urlparse(url)
         if components.hostname:
-            extra.update({"SERVER_NAME": components.hostname})
+            extra["SERVER_NAME"] = components.hostname
         if components.port:
-            extra.update({"SERVER_PORT": components.port})
+            extra["SERVER_PORT"] = components.port
         if self._user_agent:
-            extra.update({"User-Agent": self._user_agent})
+            extra["User-Agent"] = self._user_agent
         if self._custom_headers:
             extra.update(self._custom_headers)
         return extra
