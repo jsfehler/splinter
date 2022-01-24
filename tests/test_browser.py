@@ -19,9 +19,7 @@ def patch_driver(pattern):
     old_import = builtins.__import__
 
     def custom_import(name, *args, **kwargs):
-        if pattern in name:
-            return None
-        return old_import(name, *args, **kwargs)
+        return None if pattern in name else old_import(name, *args, **kwargs)
 
     builtins.__import__ = custom_import
 
