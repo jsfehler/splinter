@@ -15,65 +15,39 @@ Get value of an element
 
 In order to retrieve an element's value, use the ``value`` property:
 
-.. highlight:: python
-
-::
+.. code-block:: python
 
     browser.find_by_css('h1').first.value
 
 or
 
-.. highlight:: python
-
-::
+.. code-block:: python
 
     element = browser.find_by_css('h1').first
     element.value
 
 
-Clicking links
---------------
+Interacting with links
+----------------------
 
-You can click in links. To click in links by href, partial href, text or partial text you can use this.
-IMPORTANT: These methods return the first element always.
+You can interact with links directly using the `browser.links` object.
+The following methods will limit their search to `<a>` elements on the page.
 
-.. highlight:: python
+.. code-block:: python
 
-::
+    browser.links.find_by_href('http://www.the_site.com/my_link').click()
 
-    browser.click_link_by_href('http://www.the_site.com/my_link')
+.. code-block:: python
 
-or
+    browser.links.find_by_partial_href('my_link').click()
 
-.. highlight:: python
+.. code-block:: python
 
-::
+    browser.links.find_by_text('Click Here for My Link!').click()
 
-    browser.click_link_by_partial_href('my_link')
+.. code-block:: python
 
-or
-
-.. highlight:: python
-
-::
-
-    browser.click_link_by_text('my link')
-
-or
-
-.. highlight:: python
-
-::
-
-    browser.click_link_by_partial_text('part of link text')
-
-or
-
-.. highlight:: python
-
-::
-
-    browser.click_link_by_id('link_id')
+    browser.links.find_by_partial_text('Click Here').click()
 
 
 Clicking buttons
@@ -93,7 +67,7 @@ or
 
 ::
 
-    browser.find_link_by_text('my link').first.click()
+    browser.links.find_by_text('Click Here for My Link!').first.click()
 
 
 Interacting with forms
@@ -184,4 +158,3 @@ You can invoke any ``Element`` method on ``ElementList`` and it will be proxied 
 
     assert browser.find_by_css('a.banner').first.visible
     assert browser.find_by_css('a.banner').visible
-

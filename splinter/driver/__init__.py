@@ -8,6 +8,8 @@
 This module contains the basic API for splinter drivers and elements.
 """
 
+import warnings
+
 from splinter.meta import InheritedDocs
 
 
@@ -439,6 +441,11 @@ class DriverAPI(InheritedDocs("_DriverAPI", (object,), {})):
         Arguments:
             href (str): href of the element to click.
         """
+        warnings.warn(
+            'browser.click_link_by_href is deprecated.'
+            f' Use browser.links.find_by_href({href}).click() instead.',
+            FutureWarning,
+        )
         return self.find_link_by_href(href).first.click()
 
     def click_link_by_partial_href(self, partial_href):
@@ -447,6 +454,11 @@ class DriverAPI(InheritedDocs("_DriverAPI", (object,), {})):
         Arguments:
             partial_href (str): href of the element to click.
         """
+        warnings.warn(
+            'browser.click_link_by_partial_href is deprecated.'
+            f' Use browser.links.find_by_partial_href({partial_href}).click() instead.',
+            FutureWarning,
+        )
         return self.find_link_by_partial_href(partial_href).first.click()
 
     def click_link_by_text(self, text):
@@ -455,6 +467,11 @@ class DriverAPI(InheritedDocs("_DriverAPI", (object,), {})):
         Arguments:
             text (str): text of the element to click.
         """
+        warnings.warn(
+            'browser.click_link_by_text is deprecated.'
+            f' Use browser.links.find_by_text({text}).click() instead.',
+            FutureWarning,
+        )
         return self.find_link_by_text(text).first.click()
 
     def click_link_by_partial_text(self, partial_text):
@@ -463,12 +480,22 @@ class DriverAPI(InheritedDocs("_DriverAPI", (object,), {})):
         Arguments:
             partial_text (str): text of the element to click.
         """
+        warnings.warn(
+            'browser.click_link_by_partial_text is deprecated.'
+            f' Use browser.links.find_by_partial_text({partial_text}).click() instead.',
+            FutureWarning,
+        )
         return self.find_link_by_partial_text(partial_text).first.click()
 
     def click_link_by_id(self, id):  # NOQA: A002
         """
         Clicks in a link by id.
         """
+        warnings.warn(
+            'browser.click_link_by_id is deprecated.'
+            f' Use browser.find_by_id({id}).click() instead.',
+            FutureWarning,
+        )
         return self.find_by_id(id).first.click()
 
     def quit(self):  # NOQA: A003
