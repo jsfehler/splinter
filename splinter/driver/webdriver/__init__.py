@@ -162,7 +162,7 @@ class Window:
         return not self.__eq__(other)
 
     def __repr__(self):
-        return "<Window %s: %s>" % (self.name, self.url)
+        return f"<Window {self.name}: {self.url}>"
 
 
 class Windows:
@@ -219,10 +219,7 @@ def _find(self, finder, finder_kwargs=None):
 
     """
     finder_kwargs = finder_kwargs or {}
-
     elements = None
-    elem_list = []
-
     try:
         elements = finder(**finder_kwargs)
         if not isinstance(elements, list):
@@ -236,10 +233,11 @@ def _find(self, finder, finder_kwargs=None):
         # quickly
         pass
 
-    if elements:
-        elem_list = [self.element_class(element, self) for element in elements]
-
-    return elem_list
+    return (
+        [self.element_class(element, self) for element in elements]
+        if elements
+        else []
+    )
 
 
 def find_by(
@@ -333,7 +331,7 @@ class BaseWebDriver(DriverAPI):
         return self.driver.execute_script(script, *args)
 
     def evaluate_script(self, script, *args):
-        return self.driver.execute_script("return %s" % script, *args)
+        return self.driver.execute_script(f"return {script}", *args)
 
     def is_element_visible(self, finder, selector, wait_time=None):
         wait_time = wait_time or self.wait_time
@@ -350,7 +348,7 @@ class BaseWebDriver(DriverAPI):
 
         while time.time() < end_time:
             element = finder(selector, wait_time=0)
-            if not element or (element and not element.visible):
+            if not element or not element.visible:
                 return True
         return False
 
@@ -430,8 +428,7 @@ class BaseWebDriver(DriverAPI):
         wait_time = wait_time or self.wait_time
 
         try:
-            alert = WebDriverWait(self.driver, wait_time).until(EC.alert_is_present())
-            return alert
+            return WebDriverWait(self.driver, wait_time).until(EC.alert_is_present())
         except TimeoutException:
             return None
 
@@ -561,13 +558,12 @@ class BaseWebDriver(DriverAPI):
         )
 
     def find_by_value(self, value, wait_time=None):
-        elem = self.find_by_xpath(
-            '//*[@value="{}"]'.format(value),
+        if elem := self.find_by_xpath(
+            f'//*[@value="{value}"]',
             original_find="value",
             original_query=value,
             wait_time=wait_time,
-        )
-        if elem:
+        ):
             return elem
         return self.find_by_xpath('//*[.="%s"]' % value)
 
@@ -604,10 +600,7 @@ class BaseWebDriver(DriverAPI):
 
         for name, value in field_values.items():
             try:
-                if form:
-                    elements = form.find_by_name(name)
-                else:
-                    elements = self.find_by_name(name)
+                elements = form.find_by_name(name) if form else self.find_by_name(name)
                 element = elements.first
                 if (
                     element["type"] in ["text", "password", "tel"]
@@ -651,7 +644,7 @@ class BaseWebDriver(DriverAPI):
         self.find_by_name(name).first.uncheck()
 
     def screenshot(self, name="", suffix=".png", full=False, unique_file=True):
-        filename = '{}{}'.format(name, suffix)
+        filename = f'{name}{suffix}'
 
         if unique_file:
             (fd, filename) = tempfile.mkstemp(prefix=name, suffix=suffix)
@@ -670,7 +663,7 @@ class BaseWebDriver(DriverAPI):
         return filename
 
     def html_snapshot(self, name="", suffix=".html", encoding='utf-8', unique_file=True):
-        filename = '{}{}'.format(name, suffix)
+        filename = f'{name}{suffix}'
 
         if unique_file:
             (fd, filename) = tempfile.mkstemp(prefix=name, suffix=suffix)
@@ -786,9 +779,7 @@ class WebDriverElement(ElementAPI):
             finder = '@value'
             search_value = value
 
-        self.find_by_xpath(
-            './/option[{}="{}"]'.format(finder, search_value)
-        )._element.click()
+        self.find_by_xpath(f'.//option[{finder}="{search_value}"]')._element.click()
 
     def select_by_text(self, text):
         self.select(text=text)
@@ -880,7 +871,7 @@ class WebDriverElement(ElementAPI):
         )
 
     def find_by_value(self, value, wait_time=None):
-        selector = '[value="{}"]'.format(value)
+        selector = f'[value="{value}"]'
 
         return self.find_by(
             self._element.find_elements,
@@ -892,7 +883,7 @@ class WebDriverElement(ElementAPI):
 
     def find_by_text(self, text, wait_time=None):
         # Add a period to the xpath to search only inside the parent.
-        xpath_str = '.{}'.format(_concat_xpath_from_str(text))
+        xpath_str = f'.{_concat_xpath_from_str(text)}'
 
         return self.find_by(
             self._element.find_elements,
@@ -976,7 +967,7 @@ class WebDriverElement(ElementAPI):
 
     def screenshot(self, name='', suffix='.png', full=False, unique_file=True):
 
-        filename = '{}{}'.format(name, suffix)
+        filename = f'{name}{suffix}'
 
         if unique_file:
             (fd, filename) = tempfile.mkstemp(prefix=name, suffix=suffix)
