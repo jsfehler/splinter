@@ -55,9 +55,7 @@ def get_browser(browser_name, **kwargs):
         return Browser("zope.testbrowser", wait_time=0.1)
 
     elif browser_name == 'edge':
-        # Github Actions Windows EdgeDriver path
-        driver_path = os.getenv('EDGEWEBDRIVER')
-        if driver_path:
+        if driver_path := os.getenv('EDGEWEBDRIVER'):
             kwargs['executable_path'] = driver_path + '\msedgedriver.exe'  # NOQA
 
         return Browser('edge', headless=True, **kwargs)

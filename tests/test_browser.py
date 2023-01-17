@@ -17,9 +17,7 @@ def patch_driver(pattern):
     old_import = builtins.__import__
 
     def custom_import(name, *args, **kwargs):
-        if pattern in name:
-            return None
-        return old_import(name, *args, **kwargs)
+        return None if pattern in name else old_import(name, *args, **kwargs)
 
     builtins.__import__ = custom_import
 
@@ -77,7 +75,8 @@ def test_browser_driver_retry_count():
     def test_driver(*args, **kwargs):
         global test_retry_count
         test_retry_count += 1
-        raise IOError("test_retry_count: " + str(test_retry_count))
+        raise IOError(f"test_retry_count: {test_retry_count}")
+
     _DRIVERS["test_driver"] = test_driver
 
     test_retry_count = 0
@@ -105,7 +104,7 @@ def test_browser_log_missing_drivers(caplog):
     unpatch_driver(browser, old_import)
 
     assert 7 == len(caplog.records)
-    for i in range(0, 6):
+    for i in range(6):
         record = caplog.records[i]
         assert record.levelname == 'DEBUG'
         assert 'Import Warning' in record.message
