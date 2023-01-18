@@ -37,11 +37,16 @@ setup(
     author="CobraTeam",
     author_email="andrewsmedina@gmail.com",
     license="BSD",
-    classifiers=[
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3",
-    ]
-    + [("Programming Language :: Python :: %s" % x) for x in "3.7 3.8 3.9 3.10".split()],
+    classifiers=(
+        [
+            "License :: OSI Approved :: BSD License",
+            "Programming Language :: Python :: 3",
+        ]
+        + [
+            f"Programming Language :: Python :: {x}"
+            for x in "3.7 3.8 3.9 3.10".split()
+        ]
+    ),
     project_urls={
         "Documentation": "https://splinter.readthedocs.io/",
         "Changelog": "https://github.com/cobrateam/splinter/tree/master/docs/news",
@@ -50,11 +55,13 @@ setup(
     },
     packages=find_packages(exclude=["docs", "tests", "samples"]),
     include_package_data=True,
-    install_requires=[
-        "urllib3 >=1.26.14,<2.0"
-    ],
+    install_requires=["urllib3 >=1.26.14,<2.0"],
     extras_require={
-        "zope.testbrowser": ["zope.testbrowser>=5.5.1", "lxml>=4.2.4", "cssselect"],
+        "zope.testbrowser": [
+            "zope.testbrowser>=5.5.1",
+            "lxml>=4.2.4",
+            "cssselect",
+        ],
         "django": ["Django>=2.0.6", "lxml>=4.2.4", "cssselect"],
         "flask": ["Flask>=2.0.2", "lxml>=4.2.4", "cssselect"],
         "selenium": ["selenium>=4.1.0,<4.2.0"],
