@@ -48,9 +48,7 @@ class CookieManager(CookieManagerAPI):
         self.driver.cookies.clearAll()
 
     def all(self, verbose=False):  # NOQA: A003
-        cookies = {}
-        for key, value in self.driver.cookies.items():
-            cookies[key] = value
+        cookies = dict(self.driver.cookies.items())
         return cookies
 
     def __getitem__(self, item):
@@ -126,7 +124,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
 
     def find_option_by_value(self, value):
         html = self.htmltree
-        element = html.xpath('//option[@value="%s"]' % value)[0]
+        element = html.xpath(f'//option[@value="{value}"]')[0]
         control = self._browser.getControl(element.text)
         return ElementList(
             [ZopeTestBrowserOptionElement(control, self)], find_by="value", query=value
@@ -134,7 +132,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
 
     def find_option_by_text(self, text):
         html = self.htmltree
-        element = html.xpath('//option[normalize-space(text())="%s"]' % text)[0]
+        element = html.xpath(f'//option[normalize-space(text())="{text}"]')[0]
         control = self._browser.getControl(element.text)
         return ElementList(
             [ZopeTestBrowserOptionElement(control, self)], find_by="text", query=text
@@ -172,17 +170,14 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
         )
 
     def find_by_tag(self, tag):
-        return self.find_by_xpath(
-            "//%s" % tag, original_find="tag", original_query=tag
-        )
+        return self.find_by_xpath(f"//{tag}", original_find="tag", original_query=tag)
 
     def find_by_value(self, value):
-        elem = self.find_by_xpath(
-            '//*[@value="%s"]' % value, original_find="value", original_query=value
-        )
-        if elem:
+        if elem := self.find_by_xpath(
+            f'//*[@value="{value}"]', original_find="value", original_query=value
+        ):
             return elem
-        return self.find_by_xpath('//*[.="%s"]' % value)
+        return self.find_by_xpath(f'//*[.="{value}"]')
 
     def find_by_text(self, text):
         xpath_str = _concat_xpath_from_str(text)
@@ -194,7 +189,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
 
     def find_by_id(self, id_value):
         return self.find_by_xpath(
-            '//*[@id="%s"][1]' % id_value,
+            f'//*[@id="{id_value}"][1]',
             original_find="id",
             original_query=id_value,
         )
@@ -208,9 +203,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
                 control = self._browser.getControl(name=name, index=index)
                 elements.append(control)
                 index += 1
-            except LookupError:
-                break
-            except NotImplementedError:
+            except (LookupError, NotImplementedError):
                 break
         return ElementList(
             [ZopeTestBrowserControlElement(element, self) for element in elements],
@@ -231,10 +224,7 @@ class ZopeTestBrowser(ElementPresentMixIn, DriverAPI):
                 control = form.getControl(name=name)
 
                 if control.type == "checkbox":
-                    if value:
-                        control.value = control.options
-                    else:
-                        control.value = []
+                    control.value = control.options if value else []
                 elif control.type == "radio":
                     control.value = [
                         option for option in control.options if option == value
@@ -337,7 +327,7 @@ class ZopeTestBrowserElement(ElementAPI):
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_name(self, name):
-        elements = self._element.cssselect('[name="%s"]' % name)
+        elements = self._element.cssselect(f'[name="{name}"]')
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_tag(self, name):
@@ -345,16 +335,16 @@ class ZopeTestBrowserElement(ElementAPI):
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_value(self, value):
-        elements = self._element.cssselect('[value="%s"]' % value)
+        elements = self._element.cssselect(f'[value="{value}"]')
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_text(self, text):
         # Add a period to the xpath to search only inside the parent.
-        xpath_str = '.{}'.format(_concat_xpath_from_str(text))
+        xpath_str = f'.{_concat_xpath_from_str(text)}'
         return self.find_by_xpath(xpath_str)
 
     def find_by_id(self, id):  # NOQA: A002
-        elements = self._element.cssselect("#%s" % id)
+        elements = self._element.cssselect(f"#{id}")
         return ElementList([self.__class__(element, self) for element in elements])
 
     @property

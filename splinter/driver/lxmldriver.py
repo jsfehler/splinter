@@ -50,7 +50,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
 
     def _do_method(self, action, url, data=None):
         raise NotImplementedError(
-            "%s doesn't support doing http methods." % self.driver_name
+            f"{self.driver_name} doesn't support doing http methods."
         )
 
     def visit(self, url):
@@ -72,11 +72,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
             if v is None:
                 continue
 
-            if isinstance(v, lxml.html.MultipleSelectOptions):
-                data[k] = list(v)
-            else:
-                data[k] = v
-
+            data[k] = list(v) if isinstance(v, lxml.html.MultipleSelectOptions) else v
         for key in form.inputs.keys():
             form_input = form.inputs[key]
             if getattr(form_input, "type", "") == "file" and key in data:
@@ -100,7 +96,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
 
     def submit_data(self, form):
         raise NotImplementedError(
-            "%s doesn't support submitting then getting the data." % self.driver_name
+            f"{self.driver_name} doesn't support submitting then getting the data."
         )
 
     def back(self):
@@ -135,7 +131,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
     @property
     def html(self):
         raise NotImplementedError(
-            "%s doesn't support getting the html of the response." % self.driver_name
+            f"{self.driver_name} doesn't support getting the html of the response."
         )
 
     @property
@@ -144,7 +140,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
 
     def find_option_by_value(self, value):
         html = self.htmltree
-        element = html.xpath('//option[@value="%s"]' % value)[0]
+        element = html.xpath(f'//option[@value="{value}"]')[0]
         control = LxmlControlElement(element.getparent(), self)
         return ElementList(
             [LxmlOptionElement(element, control)], find_by="value", query=value
@@ -152,7 +148,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
 
     def find_option_by_text(self, text):
         html = self.htmltree
-        element = html.xpath('//option[normalize-space(text())="%s"]' % text)[0]
+        element = html.xpath(f'//option[normalize-space(text())="{text}"]')[0]
         control = LxmlControlElement(element.getparent(), self)
         return ElementList(
             [LxmlOptionElement(element, control)], find_by="text", query=text
@@ -187,17 +183,14 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
         )
 
     def find_by_tag(self, tag):
-        return self.find_by_xpath(
-            "//%s" % tag, original_find="tag", original_query=tag
-        )
+        return self.find_by_xpath(f"//{tag}", original_find="tag", original_query=tag)
 
     def find_by_value(self, value):
-        elem = self.find_by_xpath(
-            '//*[@value="%s"]' % value, original_find="value", original_query=value
-        )
-        if elem:
+        if elem := self.find_by_xpath(
+            f'//*[@value="{value}"]', original_find="value", original_query=value
+        ):
             return elem
-        return self.find_by_xpath('//*[.="%s"]' % value)
+        return self.find_by_xpath(f'//*[.="{value}"]')
 
     def find_by_text(self, text):
         xpath_str = _concat_xpath_from_str(text)
@@ -209,7 +202,7 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
 
     def find_by_id(self, id_value):
         return self.find_by_xpath(
-            '//*[@id="%s"][1]' % id_value,
+            f'//*[@id="{id_value}"][1]',
             original_find="id",
             original_query=id_value,
         )
@@ -217,12 +210,8 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
     def find_by_name(self, name):
         html = self.htmltree
 
-        xpath = '//*[@name="%s"]' % name
-        elements = []
-
-        for xpath_element in html.xpath(xpath):
-            elements.append(xpath_element)
-
+        xpath = f'//*[@name="{name}"]'
+        elements = list(html.xpath(xpath))
         find_by = "name"
         query = xpath
 
@@ -252,23 +241,19 @@ class LxmlDriver(ElementPresentMixIn, DriverAPI):
                     element = self.find_by_name(name)
                     control = element.first._control
                 control_type = control.get("type")
-                if control_type == "checkbox":
-                    if value:
-                        control.value = value  # control.options
-                    else:
-                        control.value = []
-                elif control_type == "radio":
-                    control.value = (
-                        value
-                    )  # [option for option in control.options if option == value]
-                elif control_type == "select":
-                    if isinstance(value, list):
-                        control.value = value
-                    else:
-                        control.value = [value]
+                if (
+                    control_type == "checkbox"
+                    and value
+                    or control_type != "checkbox"
+                    and control_type == "select"
+                    and isinstance(value, list)
+                    or control_type not in ["checkbox", "select"]
+                ):
+                    control.value = value  # control.options
+                elif control_type == "checkbox":
+                    control.value = []
                 else:
-                    # text, textarea, password, tel
-                    control.value = value
+                    control.value = [value]
             except ElementDoesNotExist as e:
                 if not ignore_missing:
                     raise ElementDoesNotExist(e)
@@ -356,7 +341,7 @@ class LxmlElement(ElementAPI):
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_name(self, name):
-        elements = self._element.cssselect('[name="%s"]' % name)
+        elements = self._element.cssselect(f'[name="{name}"]')
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_tag(self, name):
@@ -364,16 +349,16 @@ class LxmlElement(ElementAPI):
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_value(self, value):
-        elements = self._element.cssselect('[value="%s"]' % value)
+        elements = self._element.cssselect(f'[value="{value}"]')
         return ElementList([self.__class__(element, self) for element in elements])
 
     def find_by_text(self, text):
         # Add a period to the xpath to search only inside the parent.
-        xpath_str = '.{}'.format(_concat_xpath_from_str(text))
+        xpath_str = f'.{_concat_xpath_from_str(text)}'
         return self.find_by_xpath(xpath_str)
 
     def find_by_id(self, id):  # NOQA: A002
-        elements = self._element.cssselect("#%s" % id)
+        elements = self._element.cssselect(f"#{id}")
         return ElementList([self.__class__(element, self) for element in elements])
 
     @property
@@ -390,7 +375,9 @@ class LxmlElement(ElementAPI):
 
     @property
     def html(self):
-        return re.match(r"^<[^<>]+>(.*)</[^<>]+>$", self.outer_html, re.MULTILINE | re.DOTALL).group(1)
+        return re.match(
+            r"^<[^<>]+>(.*)</[^<>]+>$", self.outer_html, re.MULTILINE | re.DOTALL
+        )[1]
 
     def has_class(self, class_name):
         return len(self._element.find_class(class_name)) > 0
@@ -431,9 +418,7 @@ class LxmlControlElement(LxmlElement):
         parent_form = self._get_parent_form()
 
         if self._control.get("type") == "submit":
-            name = self._control.get("name")
-
-            if name:
+            if name := self._control.get("name"):
                 value = self._control.get("value", "")
                 parent_form.append(
                     lxml.html.Element("input", name=name, value=value, type="hidden")

@@ -47,7 +47,7 @@ class WebDriver(BaseWebDriver):
         caps = getattr(DesiredCapabilities, browser_name, {})
         if kwargs.get('desired_capabilities'):
             # Combine user's desired capabilities with default
-            caps.update(kwargs['desired_capabilities'])
+            caps |= kwargs['desired_capabilities']
 
         kwargs['desired_capabilities'] = caps
 

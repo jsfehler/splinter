@@ -61,8 +61,7 @@ def get_browser(browser_name, config=None, **kwargs):
     elif browser_name == 'edge':
         # Github Actions Windows EdgeDriver path
         service = None
-        driver_path = os.getenv('EDGEWEBDRIVER')
-        if driver_path:
+        if driver_path := os.getenv('EDGEWEBDRIVER'):
             from selenium.webdriver.edge.service import Service as EdgeService
             service = EdgeService(executable_path=f'{driver_path}\msedgedriver.exe')  # NOQA
 

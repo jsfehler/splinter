@@ -60,7 +60,7 @@ class BaseBrowserTests(
     def test_can_back_on_history(self):
         """should be able to back on history"""
         self.browser.visit(EXAMPLE_APP)
-        self.browser.visit("{}iframe".format(EXAMPLE_APP))
+        self.browser.visit(f"{EXAMPLE_APP}iframe")
         self.browser.back()
         self.assertEqual(EXAMPLE_APP, self.browser.url)
 
@@ -123,7 +123,7 @@ class BaseBrowserTests(
         when visiting /redirected, browser should be redirected to /redirected-location?come=get&some=true
         browser.url should be updated
         """
-        self.browser.visit("{}redirected".format(EXAMPLE_APP))
+        self.browser.visit(f"{EXAMPLE_APP}redirected")
         self.assertIn("I just been redirected to this location.", self.browser.html)
         self.assertIn("redirect-location?come=get&some=true", self.browser.url)
 
@@ -179,14 +179,14 @@ class WebDriverTests(
         self.assertEqual(2, self.browser.wait_time)
 
     def test_access_alerts_and_accept_them(self):
-        self.browser.visit(EXAMPLE_APP + "alert")
+        self.browser.visit(f"{EXAMPLE_APP}alert")
         self.browser.find_by_tag("h1").click()
         alert = self.browser.get_alert()
         self.assertEqual("This is an alert example.", alert.text)
         alert.accept()
 
     def test_access_prompts_and_be_able_to_fill_then(self):
-        self.browser.visit(EXAMPLE_APP + "alert")
+        self.browser.visit(f"{EXAMPLE_APP}alert")
         self.browser.find_by_tag("h2").click()
 
         alert = self.browser.get_alert()
@@ -202,7 +202,7 @@ class WebDriverTests(
         response.accept()
 
     def test_access_confirm_and_accept_and_dismiss_them(self):
-        self.browser.visit(EXAMPLE_APP + "alert")
+        self.browser.visit(f"{EXAMPLE_APP}alert")
 
         self.browser.find_by_tag("h3").click()
         alert = self.browser.get_alert()
@@ -230,7 +230,7 @@ class WebDriverTests(
         alert.accept()
 
     def test_access_confirm_and_accept_and_dismiss_them_using_with(self):
-        self.browser.visit(EXAMPLE_APP + "alert")
+        self.browser.visit(f"{EXAMPLE_APP}alert")
 
         self.browser.find_by_tag("h3").click()
         with self.browser.get_alert() as alert:
@@ -258,7 +258,7 @@ class WebDriverTests(
 
     def test_access_alerts_using_with(self):
         "should access alerts using 'with' statement"
-        self.browser.visit(EXAMPLE_APP + "alert")
+        self.browser.visit(f"{EXAMPLE_APP}alert")
         self.browser.find_by_tag("h1").click()
         with self.browser.get_alert() as alert:
             self.assertEqual("This is an alert example.", alert.text)
@@ -280,7 +280,7 @@ class WebDriverTests(
 
         config = Config(user_agent="iphone")
         browser = get_browser(driver_name, config=config)
-        browser.visit(EXAMPLE_APP + "useragent")
+        browser.visit(f"{EXAMPLE_APP}useragent")
 
         assert "iphone" in browser.html
 
@@ -291,7 +291,7 @@ class WebDriverTests(
 
     def test_click_intercepted(self):
         """Intercepted clicks should retry."""
-        self.browser.visit(EXAMPLE_APP + "click_intercepted")
+        self.browser.visit(f"{EXAMPLE_APP}click_intercepted")
         self.browser.wait_time = 10
         # Clicking this element adds a new element to the page.
         self.browser.find_by_id("overlapped").click()
@@ -301,7 +301,7 @@ class WebDriverTests(
 
     def test_click_intercepted_fails(self):
         """Intercepted clicks that never unblock should raise an error."""
-        self.browser.visit(EXAMPLE_APP + "click_intercepted")
+        self.browser.visit(f"{EXAMPLE_APP}click_intercepted")
 
         with pytest.raises(WebDriverException):
             self.browser.find_by_id("overlapped2").click()

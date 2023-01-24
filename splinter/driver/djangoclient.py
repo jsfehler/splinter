@@ -32,9 +32,7 @@ class CookieManager(CookieManagerAPI):
         self.driver.cookies.clear()
 
     def all(self, verbose=False):  # NOQA: A003
-        cookies = {}
-        for key, value in self.driver.cookies.items():
-            cookies[key] = value
+        cookies = dict(self.driver.cookies.items())
         return cookies
 
     def __getitem__(self, item):
@@ -67,11 +65,11 @@ class DjangoClient(LxmlDriver):
 
         self._custom_headers = kwargs.pop("custom_headers", {})
 
-        client_kwargs = {}
-        for key, value in kwargs.items():
-            if key.startswith("client_"):
-                client_kwargs[key.replace("client_", "")] = value
-
+        client_kwargs = {
+            key.replace("client_", ""): value
+            for key, value in kwargs.items()
+            if key.startswith("client_")
+        }
         self._browser = Client(**client_kwargs)
 
         self._cookie_manager = CookieManager(self._browser)
@@ -102,13 +100,13 @@ class DjangoClient(LxmlDriver):
         extra = {}
         components = parse.urlparse(url)
         if components.hostname:
-            extra.update({"SERVER_NAME": components.hostname})
+            extra["SERVER_NAME"] = components.hostname
         if components.port:
-            extra.update({"SERVER_PORT": components.port})
+            extra["SERVER_PORT"] = components.port
         if self.config.user_agent:
-            extra.update({"User-Agent": self._user_agent})
+            extra["User-Agent"] = self._user_agent
         if self._custom_headers:
-            extra.update(self._custom_headers)
+            extra |= self._custom_headers
         return extra
 
     def _do_method(self, method, url, data=None, record_url=True):

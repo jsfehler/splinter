@@ -30,12 +30,11 @@ def _setup_chrome(driver_class, config=None, options=None, service=None, **kwarg
         for extension in config.extensions:
             options.add_extension(extension)
 
-    if driver_class == Remote:
-        rv = driver_class(options=options, **kwargs)
-    else:
-        rv = driver_class(options=options, service=service, **kwargs)
-
-    return rv
+    return (
+        driver_class(options=options, **kwargs)
+        if driver_class == Remote
+        else driver_class(options=options, service=service, **kwargs)
+    )
 
 
 def _setup_edge(driver_class, config=None, options=None, service=None, **kwargs):
@@ -59,12 +58,11 @@ def _setup_edge(driver_class, config=None, options=None, service=None, **kwargs)
         for extension in config.extensions:
             options.add_extension(extension)
 
-    if driver_class == Remote:
-        rv = driver_class(options=options, **kwargs)
-    else:
-        rv = driver_class(options=options, service=service, **kwargs)
-
-    return rv
+    return (
+        driver_class(options=options, **kwargs)
+        if driver_class == Remote
+        else driver_class(options=options, service=service, **kwargs)
+    )
 
 
 def _setup_firefox(driver_class, config=None, options=None, service=None, **kwargs):
