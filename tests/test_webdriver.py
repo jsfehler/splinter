@@ -27,7 +27,6 @@ def test_webdriver_local_driver_not_present(browser_name):
         b.visit('https://duckduckgo.com')
         b.find_by_id('search_form_input_homepage')
     except WebDriverException:
-        assert True
         return
 
     else:
