@@ -21,8 +21,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC  # NOQA: N812
 from selenium.webdriver.support.ui import WebDriverWait
 
-from splinter.driver import DriverAPI
-from splinter.driver import ElementAPI
+from splinter.abc import DriverAPI, ElementAPI
 from splinter.driver.find_links import FindLinks
 from splinter.driver.webdriver.cookie_manager import CookieManager
 from splinter.driver.xpath_utils import _concat_xpath_from_str
@@ -683,7 +682,7 @@ class TypeIterator:
             yield key
 
 
-class ShadowRootElement(ElementAPI):
+class ShadowRootElement:
     find_by = find_by
 
     def __init__(self, element, parent):

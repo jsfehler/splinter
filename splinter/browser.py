@@ -10,7 +10,7 @@ from typing import Union
 
 from urllib3.exceptions import MaxRetryError
 
-from splinter.driver import DriverAPI
+from splinter.abc import DriverAPI
 from splinter.exceptions import DriverNotFoundError
 
 logger = logging.getLogger(__name__)
