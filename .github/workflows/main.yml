@@ -51,6 +51,12 @@ jobs:
         run: |
           tox -e tests_lxml_drivers -- -n 4
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: .cov_splinter
+          path: .cov_splinter
+
+
   tests_selenium_remote:
     runs-on: ubuntu-latest
 
@@ -123,3 +129,8 @@ jobs:
       - name: Run Selenium tests
         run: |
           tox -e tests_selenium -- -n 4;
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: .cov_selenium
+          path: .cov_selenium
