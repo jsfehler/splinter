@@ -3,7 +3,8 @@ name: Coverage
 # Only trigger, when the build workflow succeeded
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows:
+      - CI
     types:
       - completed
 
@@ -13,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - uses: actions/setup-python@v5
         with:
@@ -25,7 +28,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: .cov_*
-      - run: |
+        run: |
           ls
           coverage combine .cov_splinter_py312 .cov_selenium_py312
           coverage report
