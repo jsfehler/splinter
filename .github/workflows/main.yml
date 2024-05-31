@@ -32,6 +32,10 @@ jobs:
             python-version: 3.11
           - PY_VER: py312
             python-version: 3.12
+
+    env:
+      COVERAGE_FILE: .cov_splinter_${{ matrix.PY_VER }}
+
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
@@ -115,6 +119,9 @@ jobs:
             python-version: "3.11"
           - PY_VER: py312
             python-version: "3.12"
+
+    env:
+      COVERAGE_FILE: .cov_selenium_${{ matrix.PY_VER }}
 
     steps:
       - uses: actions/checkout@v4
