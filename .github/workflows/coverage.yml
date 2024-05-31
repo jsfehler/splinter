@@ -1,0 +1,34 @@
+name: Coverage
+
+# Only trigger, when the build workflow succeeded
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: pip install coverage
+
+      - name: Coverage
+        uses: actions/download-artifact@v4
+        with:
+          pattern: .cov_*
+        run: |
+          ls
+          coverage combine .cov_splinter_py312 .cov_selenium_py312
+          coverage report

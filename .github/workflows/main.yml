@@ -32,6 +32,10 @@ jobs:
             python-version: 3.11
           - PY_VER: py312
             python-version: 3.12
+
+    env:
+      COVERAGE_FILE: .cov_splinter_${{ matrix.PY_VER }}
+
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
@@ -50,6 +54,12 @@ jobs:
       - name: Run non-webdriver driver tests
         run: |
           tox -e tests_lxml_drivers -- -n 4
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: .cov_splinter_${{ matrix.PY_VER }}
+          path: .cov_splinter_${{ matrix.PY_VER }}
+
 
   tests_selenium_remote:
     runs-on: ubuntu-latest
@@ -110,6 +120,9 @@ jobs:
           - PY_VER: py312
             python-version: "3.12"
 
+    env:
+      COVERAGE_FILE: .cov_selenium_${{ matrix.PY_VER }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -123,3 +136,8 @@ jobs:
       - name: Run Selenium tests
         run: |
           tox -e tests_selenium -- -n 4;
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: .cov_selenium_${{ matrix.PY_VER }}
+          path: .cov_selenium_${{ matrix.PY_VER }}
