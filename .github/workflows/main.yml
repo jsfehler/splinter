@@ -53,8 +53,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: .cov_splinter
-          path: .cov_splinter
+          name: .cov_splinter_${{ matrix.PY_VER }}
+          path: .cov_splinter_${{ matrix.PY_VER }}
 
 
   tests_selenium_remote:
@@ -132,5 +132,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: .cov_selenium
-          path: .cov_selenium
+          name: .cov_selenium_${{ matrix.PY_VER }}
+          path: .cov_selenium_${{ matrix.PY_VER }}

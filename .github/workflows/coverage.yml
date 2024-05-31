@@ -27,5 +27,5 @@ jobs:
           pattern: .cov_*
       - run: |
           ls
-          coverage combine .cov_splinter .cov_selenium
+          coverage combine .cov_splinter_py312 .cov_selenium_py312
           coverage report
