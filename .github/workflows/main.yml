@@ -34,7 +34,7 @@ jobs:
             python-version: 3.12
 
     env:
-      COVERAGE_FILE: .cov_splinter_${{ matrix.PY_VER }}
+      COVERAGE_FILE: cov_splinter_${{ matrix.PY_VER }}
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -57,8 +57,8 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: .cov_splinter_${{ matrix.PY_VER }}
-          path: .cov_splinter_${{ matrix.PY_VER }}
+          name: cov_splinter_${{ matrix.PY_VER }}
+          path: cov_splinter_${{ matrix.PY_VER }}
 
 
   tests_selenium_remote:
@@ -121,7 +121,7 @@ jobs:
             python-version: "3.12"
 
     env:
-      COVERAGE_FILE: .cov_selenium_${{ matrix.PY_VER }}
+      COVERAGE_FILE: cov_selenium_${{ matrix.PY_VER }}
 
     steps:
       - uses: actions/checkout@v4
@@ -139,5 +139,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: .cov_selenium_${{ matrix.PY_VER }}
-          path: .cov_selenium_${{ matrix.PY_VER }}
+          name: cov_selenium_${{ matrix.PY_VER }}
+          path: cov_selenium_${{ matrix.PY_VER }}
