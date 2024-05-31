@@ -26,7 +26,7 @@ Splinter is a Python framework that provides a simple and consistent interface f
 
 * `Changelog <https://splinter.readthedocs.io/en/latest/changelog.html>`_
 
-Key features:
+Key features :
 
 - Easy to learn: The API is designed to be intuitive and quick to pick up.
 - Faster to code: Automate browser interactions quickly and reliably without fighting the tool.
