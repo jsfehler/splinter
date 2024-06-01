@@ -26,10 +26,10 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          pattern: /cov_*
+          path: cov
 
       - name: Coverage
         run: |
           ls
-          coverage combine cov_splinter_py312 cov_selenium_py312
+          coverage combine cov/cov_splinter_py312 cov/cov_selenium_py312
           coverage report
