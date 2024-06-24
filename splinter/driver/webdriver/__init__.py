@@ -18,6 +18,7 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote import remote_connection as RC  # NOQA: N812
 from selenium.webdriver.support import expected_conditions as EC  # NOQA: N812
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -25,10 +26,14 @@ from splinter.driver import DriverAPI
 from splinter.driver import ElementAPI
 from splinter.driver.find_links import FindLinks
 from splinter.driver.webdriver.cookie_manager import CookieManager
+from splinter.driver.webdriver.remote_connection import patch_get_connection_manager
 from splinter.driver.xpath_utils import _concat_xpath_from_str
 from splinter.element_list import ElementList
 from splinter.exceptions import ElementDoesNotExist
 from splinter.retry import _retry
+
+# MonkeyPatch RemoteConnection
+RC.RemoteConnection._get_connection_manager = patch_get_connection_manager  # type: ignore
 
 
 # Patch contextmanager onto Selenium's Alert

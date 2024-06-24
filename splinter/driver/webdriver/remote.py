@@ -5,18 +5,13 @@ from typing import Optional
 
 from selenium.webdriver import Remote
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.remote import remote_connection
 
 from splinter.config import Config
 from splinter.driver.webdriver import BaseWebDriver
-from splinter.driver.webdriver.remote_connection import patch_request
 from splinter.driver.webdriver.setup import _setup_chrome
 from splinter.driver.webdriver.setup import _setup_edge
 from splinter.driver.webdriver.setup import _setup_firefox
 from splinter.driver.webdriver.setup import _setup_safari
-
-# MonkeyPatch RemoteConnection
-remote_connection.RemoteConnection._request = patch_request  # type: ignore
 
 
 class WebDriver(BaseWebDriver):
