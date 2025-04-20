@@ -21,7 +21,7 @@ def _retry(
         timeout: How long, in seconds, to retry the function.
 
     Returns:
-        The final return value of func.
+        The final return value of fn.
     """
     fn_args = fn_args or []
     fn_kwargs = fn_kwargs or {}
